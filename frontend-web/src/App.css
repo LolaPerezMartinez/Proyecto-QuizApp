@@ -240,3 +240,48 @@ body {
     border-top: 1px solid rgba(156, 207, 255, 0.2);
     margin-bottom: 20px;
 }
+
+/* --- COMPLEMENTOS PARA PERFIL --- */
+.profile-avatar-wrapper {
+    background: rgba(156, 207, 255, 0.1);
+    color: var(--sky);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-avatar-wrapper .material-symbols-rounded {
+    font-size: 40px;
+}
+
+.category-icon-mini {
+    background: rgba(8, 131, 149, 0.2);
+    color: var(--petrol);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.category-icon-mini .material-symbols-rounded {
+    font-size: 20px;
+}
+
+.badge-points {
+    background: rgba(255, 91, 91, 0.15);
+    color: var(--coral);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    border: 1px solid rgba(255, 91, 91, 0.2);
+}
+
+.animate-fadeIn {
+    animation: fadeInUp 0.5s ease forwards;
+}

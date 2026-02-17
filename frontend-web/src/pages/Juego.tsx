@@ -2,14 +2,12 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../Juego.css';
-import '../Indicadores.css'; 
+import '../Indicadores.css';
 import type { PartidaResponse, PreguntaDTO, RespuestaResultadoDTO } from '../types/types';
 
 export default function Juego() {
   const location = useLocation();
   const navigate = useNavigate();
-  
-  // Recuperamos la partida del state de la navegación
   const partida = location.state?.partida as PartidaResponse;
 
   const [preguntaActualIndex, setPreguntaActualIndex] = useState(0);
@@ -17,30 +15,26 @@ export default function Juego() {
   const [mostrarResultado, setMostrarResultado] = useState(false);
   const [resultado, setResultado] = useState<RespuestaResultadoDTO | null>(null);
   const [loading, setLoading] = useState(false);
-
-  // Estado para las bolitas: null (beige), true (verde), false (rojo)
   const [historialPasos, setHistorialPasos] = useState<(boolean | null)[]>([]);
+
+  // NUEVO: Estado local para que los puntos se mantengan y sumen visualmente
+  const [puntosVisuales, setPuntosVisuales] = useState(0);
 
   useEffect(() => {
     if (!partida) {
       navigate('/login');
     } else {
-      // Inicializamos el array de bolitas según el total de preguntas de la partida
       setHistorialPasos(new Array(partida.totalPreguntas).fill(null));
     }
   }, [partida, navigate]);
 
-  // Protección contra renders nulos
-  if (!partida || !partida.preguntas || !partida.preguntas[preguntaActualIndex]) {
-    return null;
-  }
+  if (!partida || !partida.preguntas || !partida.preguntas[preguntaActualIndex]) return null;
 
   const preguntaActual: PreguntaDTO = partida.preguntas[preguntaActualIndex];
   const esMultiple = preguntaActual.tipo === 'MULTIPLE';
 
   const handleSeleccion = (opcion: string) => {
-    if (mostrarResultado) return; 
-    
+    if (mostrarResultado) return;
     if (esMultiple) {
       setRespuestasSeleccionadas(prev =>
         prev.includes(opcion) ? prev.filter(r => r !== opcion) : [...prev, opcion]
@@ -52,46 +46,35 @@ export default function Juego() {
 
   const handleResponder = async () => {
     if (respuestasSeleccionadas.length === 0) return;
-    
     setLoading(true);
-    const token = localStorage.getItem('token');
-
     try {
       const response = await axios.post<RespuestaResultadoDTO>(
-        'http://localhost:8080/api/juego/answer', 
+        'http://localhost:8080/api/juego/answer',
         {
           partidaId: Number(partida.partidaId || (partida as any).id),
           preguntaId: preguntaActual.id,
           respuestasUsuario: respuestasSeleccionadas
         },
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );
-      
-      const resData = response.data;
-      setResultado(resData);
+
+      setResultado(response.data);
       setMostrarResultado(true);
 
-      // Actualizamos el color de la bolita correspondiente
+      // ACTUALIZACIÓN DE PUNTOS: Usamos el valor que viene del backend
+      setPuntosVisuales(response.data.puntosTotales);
+
       setHistorialPasos(prev => {
         const nuevo = [...prev];
-        nuevo[preguntaActualIndex] = resData.esCorrecta;
+        nuevo[preguntaActualIndex] = response.data.esCorrecta;
         return nuevo;
       });
-
-    } catch (err: any) {
-      console.error("Error al enviar respuesta:", err);
-      alert('Error de conexión con el servidor.');
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { alert('Error de conexión'); } finally { setLoading(false); }
   };
 
   const handleSiguiente = () => {
-    if (resultado?.terminada) {
-      navigate('/resultados', { state: { resultado, partida } });
-    } else {
+    if (resultado?.terminada) navigate('/resultados', { state: { resultado, partida } });
+    else {
       setPreguntaActualIndex(prev => prev + 1);
       setRespuestasSeleccionadas([]);
       setMostrarResultado(false);
@@ -100,95 +83,81 @@ export default function Juego() {
   };
 
   return (
-    <div className="quiz-page-wrapper">
-      <div className="game-container">
-        
-        {/* Cabecera de Usuario */}
-        <div className="d-flex justify-content-between align-items-center mb-4 px-3 text-white">
-          <div>
-            <h4 className="fw-bold mb-0">{partida.nombreJugador}</h4>
-            <small className="opacity-75 text-sky">Partida en curso</small>
-          </div>
-          <div className="text-end">
-            <span className="badge rounded-pill bg-white text-dark px-3 py-2 fs-6 shadow-sm">
-              ✨ {resultado?.puntosTotales ?? '---'} pts
-            </span>
-          </div>
-        </div>
+    <div className="quiz-page-wrapper d-flex flex-column align-items-center min-vh-100">
+      <div className="container flex-grow-1 d-flex flex-column justify-content-center py-5">
+        <div className="row justify-content-center">
+          <div className="col-12 col-md-10 col-lg-8 col-xl-7">
 
-        <div className="game-card shadow-lg border-0 overflow-hidden">
-          
-          {/* Cuerpo de la Pregunta */}
-          <div className="p-4 p-md-5">
-            <div className="text-center mb-4">
-              <span className="badge px-3 py-2 categoria-badge">
-                {preguntaActual.categoria?.toUpperCase()}
-              </span>
-            </div>
+            {/* SCORE Y USUARIO */}
+            <header className="text-center mb-5">
+              <div className="score-center-display mb-4">
+                <div className="score-ring">
+                  <span className="score-number">{puntosVisuales}</span>
+                  <span className="score-text">PUNTOS</span>
+                </div>
+              </div>
+              <h2 className="user-title-caps">{partida.nombreJugador.toUpperCase()}</h2>
+              <div className="quiz-info-sub">
+                <span className="status-blink"></span>
+                PREGUNTA {preguntaActualIndex + 1} DE {partida.totalPreguntas}
+              </div>
+            </header>
 
-            <h2 className="text-center fw-800 mb-5 pregunta-enunciado">
-              {preguntaActual.enunciado}
-            </h2>
+            {/* CARD */}
+            <main className="game-card-advanced shadow-lg">
+              <div className="card-content-spacing">
+                <div className="category-header-minimal">
+                  <span className="line-dec"></span>
+                  <span className="category-txt">{preguntaActual.categoria?.toUpperCase()}</span>
+                  <span className="line-dec"></span>
+                </div>
 
-            {/* Opciones de respuesta */}
-            <div className="d-grid gap-3">
-              {preguntaActual.opciones.map((opcion, index) => {
-                const isSelected = respuestasSeleccionadas.includes(opcion);
-                const isCorrect = resultado?.respuestasCorrectas?.includes(opcion);
-                
-                let statusClass = isSelected ? "selected" : "";
-                
-                if (mostrarResultado) {
-                  if (isCorrect) statusClass = "correct disabled";
-                  else if (isSelected) statusClass = "incorrect disabled";
-                  else statusClass = "disabled opacity-50";
-                }
+                <h2 className="question-text-main text-center">{preguntaActual.enunciado}</h2>
 
-                return (
-                  <button
-                    key={index}
-                    onClick={() => handleSeleccion(opcion)}
-                    className={`btn answer-btn ${statusClass}`}
-                    disabled={mostrarResultado}
-                  >
-                    <span className="answer-index">{String.fromCharCode(65 + index)}</span>
-                    <span className="flex-grow-1 text-start ps-3">{opcion}</span>
-                    {mostrarResultado && isCorrect && <span className="ms-2">✔</span>}
-                    {mostrarResultado && isSelected && !isCorrect && <span className="ms-2">✖</span>}
+                <div className="options-vertical-grid">
+                  {preguntaActual.opciones.map((opcion, index) => {
+                    const isSelected = respuestasSeleccionadas.includes(opcion);
+                    const isCorrect = resultado?.respuestasCorrectas?.includes(opcion);
+                    let statusClass = isSelected ? "selected" : "";
+                    if (mostrarResultado) {
+                      if (isCorrect) statusClass = "is-correct";
+                      else if (isSelected) statusClass = "is-incorrect";
+                      else statusClass = "is-muted";
+                    }
+                    return (
+                      <button key={index} onClick={() => handleSeleccion(opcion)} className={`answer-option-box ${statusClass}`} disabled={mostrarResultado}>
+                        <div className="option-id">{String.fromCharCode(65 + index)}</div>
+                        <div className="option-label">{opcion}</div>
+                        {mostrarResultado && isCorrect && <span className="feedback-icon ms-auto text-success">✔</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <footer className="card-action-footer">
+                {!mostrarResultado ? (
+                  <button onClick={handleResponder} disabled={loading || respuestasSeleccionadas.length === 0} className="btn-action-hero confirm">
+                    {loading ? <div className="spinner-border spinner-border-sm"></div> : 'CONFIRMAR RESPUESTA'}
                   </button>
-                );
-              })}
-            </div>
-          </div>
+                ) : (
+                  <button onClick={handleSiguiente} className="btn-action-hero next">
+                    {resultado?.terminada ? 'VER RESULTADOS' : 'CONTINUAR'}
+                  </button>
+                )}
 
-          {/* Sección de Acción (Botones) */}
-          <div className="p-4 border-top bg-light d-flex justify-content-center">
-            {!mostrarResultado ? (
-              <button
-                onClick={handleResponder}
-                disabled={loading || respuestasSeleccionadas.length === 0}
-                className="btn btn-next px-5"
-              >
-                {loading ? <span className="spinner-border spinner-border-sm"></span> : 'CONFIRMAR RESPUESTA'}
-              </button>
-            ) : (
-              <button onClick={handleSiguiente} className="btn btn-next px-5">
-                {resultado?.terminada ? 'VER RESULTADOS' : 'SIGUIENTE PREGUNTA →'}
-              </button>
-            )}
-          </div>
-
-          {/* INDICADORES DE PROGRESO (BOLITAS) */}
-          <div className="indicadores-container">
-            {historialPasos.map((estado, idx) => {
-              let clase = "step-dot";
-              if (idx === preguntaActualIndex) clase += " active";
-              else if (estado === true) clase += " correct";
-              else if (estado === false) clase += " incorrect";
-              else clase += " pending";
-
-              return <div key={idx} className={clase} title={`Pregunta ${idx + 1}`} />;
-            })}
+                {/* BOLITAS SEPARADAS */}
+                <div className="dots-stepper-wrapper mt-5">
+                  {historialPasos.map((estado, idx) => {
+                    let dotClass = "dot-step";
+                    if (idx === preguntaActualIndex) dotClass += " is-active";
+                    else if (estado === true) dotClass += " is-true";
+                    else if (estado === false) dotClass += " is-false";
+                    return <div key={idx} className={dotClass} />;
+                  })}
+                </div>
+              </footer>
+            </main>
           </div>
         </div>
       </div>
