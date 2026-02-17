@@ -1,0 +1,34 @@
+# ===== Spring Boot / Java =====
+/target/
+*.class
+*.jar
+*.war
+*.log
+logs/
+spring.log
+
+# ===== IDE =====
+.idea/
+*.iml
+*.classpath
+*.project
+.settings/
+
+# ===== Docker volumes =====
+mysql_data/
+mongo_data/
+
+# ===== Spring config (perfiles) =====
+application-*.yml
+!application.yml
+
+# ===== Environment / secretos =====
+.env
+.env.*
+
+# ===== SO / temporales =====
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
+*.swp
