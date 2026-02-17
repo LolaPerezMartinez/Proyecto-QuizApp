@@ -46,7 +46,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // 1. Recursos públicos (Thymeleaf, estáticos y API de Auth)
                 .requestMatchers("/", "/home", "/jugar", "/categorias", "/acerca", "/css/**", "/js/**", "/img/**").permitAll()
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/auth/**", "/api/movil/**").permitAll()
                 
                 // 2. --- Seguridad para MongoDB (Preguntas) ---
                 // El GET es necesario para que el Admin vea la lista y el Usuario pueda jugar
@@ -76,10 +76,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000"));
+        /*config.setAllowedOriginPatterns(List.of(
+                "http://localhost:5173", 
+                "http://localhost:3000",
+                "http://192.168.1.*"  // <--- IMPORTANTE: Permite cualquier dispositivo en tu WiFi
+            ));*/
+        config.setAllowedOrigins(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        config.setAllowCredentials(true);
+        config.setAllowCredentials(false);//CAMBIAR A TRUE CUANDO PONGAMOS LAS RUTAS
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
