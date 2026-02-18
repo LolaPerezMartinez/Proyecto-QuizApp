@@ -22,7 +22,7 @@ export default function Juego({ preguntas, partidaId, alTerminar }) {
 
   const preguntaActual = preguntas[indice];
   // USAMOS TU IP ACTUAL
-  const API_BASE = "http://192.168.0.55:8080/api/movil";
+  const API_BASE = "http://192.168.0.186:8080/api/movil";
 
   const enviarRespuesta = async (opcion) => {
     if (respondido) return;

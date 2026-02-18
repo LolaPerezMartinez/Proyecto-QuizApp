@@ -31,7 +31,7 @@ export default function Inicio() {
   const [juegoActivo, setJuegoActivo] = useState(false);
   const [datosPartida, setDatosPartida] = useState(null);
 
-  const API_URL_BASE = "http://192.168.1.131:8080/api/movil";
+  const API_BASE = "http://192.168.0.186:8080/api/movil";
 
   useEffect(() => {
     fetchOpciones();
@@ -40,7 +40,7 @@ export default function Inicio() {
   const fetchOpciones = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_URL_BASE}/opciones-quiz`);
+      const response = await axios.get(`${API_BASE}/opciones-quiz`);
       setOpcionesDTO(response.data);
       // Valores por defecto iniciales
       if (response.data.opcionesCantidad?.length > 0) setCantidad(response.data.opcionesCantidad[0]);
@@ -66,7 +66,7 @@ export default function Inicio() {
         cantidad: cantidad
       };
 
-      const response = await axios.post(`${API_URL_BASE}/iniciar`, payload);
+      const response = await axios.post(`${API_BASE}/iniciar`, payload);
       setDatosPartida(response.data);
       setJuegoActivo(true);
       
@@ -90,7 +90,7 @@ export default function Inicio() {
     return (
       <Juego 
         preguntas={datosPartida.preguntas} 
-        partidaId={datosPartida.id} 
+        partidaId={datosPartida.partidaId} 
         alTerminar={() => {
           setJuegoActivo(false);
           setDatosPartida(null);
@@ -150,7 +150,7 @@ export default function Inicio() {
         <View style={styles.configCard}>
           <View style={styles.stepHeader}>
             <MaterialCommunityIcons name="help-circle" size={24} color={COLORS.coral} />
-            <Text style={styles.stepTitle}> Modo</Text>
+            <Text style={styles.stepTitle}> Categoria</Text>
           </View>
           <View style={styles.optionsGrid}>
             {opcionesDTO?.tipos.map(t => (
@@ -169,7 +169,7 @@ export default function Inicio() {
         <View style={styles.configCard}>
           <View style={styles.stepHeader}>
             <MaterialCommunityIcons name="numeric" size={24} color={COLORS.sky} />
-            <Text style={styles.stepTitle}> Longitud</Text>
+            <Text style={styles.stepTitle}> Preguntas</Text>
           </View>
           <View style={styles.quantityGrid}>
             {opcionesDTO?.opcionesCantidad.map(cant => (
