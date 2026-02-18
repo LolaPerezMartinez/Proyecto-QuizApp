@@ -7,6 +7,7 @@ import { Footer } from './components/Footer';
 import CRUDPreguntas from './components/CRUDPreguntas';
 import Resultado from './pages/Resultado';
 import Perfil from './pages/Perfil';
+import ReproductorMusica from './components/ReproductorMusica';
 
 function App() {
 
@@ -14,6 +15,7 @@ function App() {
   <>
     <BrowserRouter> {/* <--- ESTO ES LO QUE HACE QUE FUNCIONEN LOS HOOKS */}
     <Header/>
+       {/* 🎵 AQUÍ */}
       <Routes>
         <Route path="/login" element={<Login />} />
          <Route path="/juego" element={<Juego />} />
@@ -25,8 +27,9 @@ function App() {
       
         
       </Routes>
-    </BrowserRouter>
+    <ReproductorMusica/>
     <Footer/>
+    </BrowserRouter>
     </>
   );
 }
