@@ -52,7 +52,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // 1. Recursos públicos (Thymeleaf, estáticos y API de Auth)
                 .requestMatchers("/", "/home", "/jugar", "/categorias", "/acerca", "/css/**", "/js/**", "/img/**").permitAll()
-                .requestMatchers("/api/auth/**", "/api/movil/**").permitAll()
+                .requestMatchers("/api/auth/**", "/api/movil/**",
+                        "/v3/api-docs/**",    // Documentación en JSON
+                        "/swagger-ui/**",      // Recursos de la interfaz (JS, CSS)
+                        "/swagger-ui.html") // Punto de entrada principal
+                
+                .permitAll()
                 
                 // 2. --- Seguridad para MongoDB (Preguntas) ---
                 // El GET es necesario para que el Admin vea la lista y el Usuario pueda jugar
