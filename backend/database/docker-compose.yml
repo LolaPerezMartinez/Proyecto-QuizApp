@@ -11,8 +11,9 @@ services:
       MYSQL_USER: springuser
       MYSQL_PASSWORD: spring123
     ports:
-      - "3308:3306"
+      - "3306:3306"
     volumes:
+      # Para guardar los usuarios
       - mysql_data:/var/lib/mysql
 
   mongodb:
@@ -27,6 +28,8 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+      # Mapeo para cargar las 50 preguntas automáticamente
+      - ./database/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
 
 volumes:
   mysql_data:
