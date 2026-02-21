@@ -34,7 +34,7 @@
                 <div th:each="cat : ${categorias}" class="option-item">
                     <input type="checkbox" class="btn-check" name="categorias"
                            th:id="'cat-' + ${cat}" th:value="${cat}" autocomplete="off">
-                    <label class="btn btn-pill" th:for="'cat-' + ${cat}" th:text="${cat}">Categoría</label>
+                    <label class="btn btn-pill variant-coral" th:for="'cat-' + ${cat}" th:text="${cat}">Categoría</label>
                 </div>
             </div>
         </section>
@@ -68,7 +68,7 @@
                            th:checked="${cant == 10}" autocomplete="off">
                     <label class="btn btn-circle" th:for="'cant-' + ${cant}">
                         <span class="val" th:text="${cant}">10</span>
-                        <span class="lab">Preqs</span>
+                        <span class="lab">Qs</span>
                     </label>
                 </div>
             </div>

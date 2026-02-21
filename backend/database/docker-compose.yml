@@ -11,7 +11,7 @@ services:
       MYSQL_USER: springuser
       MYSQL_PASSWORD: spring123
     ports:
-      - "3306:3306"
+      - "3308:3306"
     volumes:
       # Para guardar los usuarios
       - mysql_data:/var/lib/mysql

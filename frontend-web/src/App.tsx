@@ -15,7 +15,6 @@ function App() {
   <>
     <BrowserRouter> {/* <--- ESTO ES LO QUE HACE QUE FUNCIONEN LOS HOOKS */}
     <Header/>
-       {/* 🎵 AQUÍ */}
       <Routes>
         <Route path="/login" element={<Login />} />
          <Route path="/juego" element={<Juego />} />
@@ -27,7 +26,7 @@ function App() {
       
         
       </Routes>
-    <ReproductorMusica/>
+      <ReproductorMusica/>
     <Footer/>
     </BrowserRouter>
     </>
