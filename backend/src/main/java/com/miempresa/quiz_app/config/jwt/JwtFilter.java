@@ -26,7 +26,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 	// Es la llave para "abrir" los tokens
 	@Value("${jwt.secret}")
-	private String secretKey; // Mejor en application.properties
+	private String secretKey; 
 
 	// Se ejecuta cada vez que React hace un fetch o axios a tu backend
 	@Override

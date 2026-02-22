@@ -172,7 +172,8 @@ public class JuegoServiceImpl implements JuegoService {
     // =====================================================
     // MÉTODOS PRIVADOS AUXILIARES (Lógica de Negocio)
     // =====================================================
-
+    
+    //Para que la respuesta correcta no sea siempre la primera
     private List<PreguntaDTO> prepararPreguntasParaFront(List<Pregunta> preguntas) {
         return preguntas.stream().map(p -> {
             // Mezclamos las opciones aquí para que el DTO sea puro

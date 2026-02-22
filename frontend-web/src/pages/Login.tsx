@@ -10,6 +10,7 @@ import type {
 } from "../types/types";
 
 export default function Login() {
+  //datos que viajan "colgados" de la dirección web (URL)
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 

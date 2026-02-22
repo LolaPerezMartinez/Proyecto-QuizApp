@@ -27,12 +27,14 @@ public class SecurityConfig {
     public SecurityConfig(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
-
+    
+    //encriptar la contraseña
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
     
+    //Java pueda hacer peticiones a otros servidores por ejemplo Jamendo
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
@@ -95,7 +97,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        config.setAllowCredentials(false);//CAMBIAR A TRUE CUANDO PONGAMOS LAS RUTAS
+        config.setAllowCredentials(false);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

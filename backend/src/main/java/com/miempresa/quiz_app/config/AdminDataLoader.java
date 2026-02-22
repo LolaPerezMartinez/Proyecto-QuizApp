@@ -36,7 +36,7 @@ public class AdminDataLoader implements CommandLineRunner {
             System.out.println("****************************************************");
             System.out.println("🚀 INITIAL DATA LOAD: Usuario administrador creado");
             System.out.println("👤 Username: admin");
-            System.out.println("🔑 Password: admin123");
+            System.out.println("🔑 Password: admin1234");
             System.out.println("🛡️  Rol: ADMIN (Se enviará como ROLE_ADMIN en el token)");
             System.out.println("****************************************************");
         } else {
