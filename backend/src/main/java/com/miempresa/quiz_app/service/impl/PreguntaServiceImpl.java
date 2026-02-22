@@ -53,7 +53,7 @@ public class PreguntaServiceImpl implements PreguntaService{
 	        ObjectMapper objectMapper = new ObjectMapper();
 	        
 	        // SEGURIDAD: Configuramos el mapper para este proceso específico
-	        //Evita conflictos entre la propiedad class que crea mongo al insertar los datos
+	        //Evita conflictos entre la propiedad _class que crea mongo al insertar los datos
 	        //y mis entidades creadas
 	        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 

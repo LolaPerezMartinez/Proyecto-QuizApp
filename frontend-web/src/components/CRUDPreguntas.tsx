@@ -75,7 +75,7 @@ function CRUDPreguntas() {
 
       const res = await axios.get(`${BASE_URL}/paginado?${params}`, getAuthHeader());
       
-      // Con VIA_DTO, los datos están en res.data.content
+      //Los datos están en res.data.content
       setPreguntas(res.data.content || []);
 
       // Y los metadatos de paginación están dentro del objeto .page
